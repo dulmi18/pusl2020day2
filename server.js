@@ -1,29 +1,30 @@
-//port config
-const port = 3001;
-//express config
-const exp = requre('express');
-//config the server application
-const app =exp();
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
 
-app.use(exp.json());
+const app = express();
 
-//declare variables
-//constants
-let name ="dulmi";
-let batch ="25.1";
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-//old way
-//app.listen(port,function(){
-//    console.log("$(port)");
-//});
+let userName = "";
 
-app.get('/',(req,res)=>{
-    res.json({message:"Hello"})
-})
+// GET request - show home page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
+// POST request - receive name
+app.post('/submit', (req, res) => {
+    userName = req.body.name;
+    res.redirect('/greeting');
+});
 
+// GET request - display greeting
+app.get('/greeting', (req, res) => {
+    res.send(`<h1>Hello, ${userName}!</h1><a href="/">Go Back</a>`);
+});
 
-app.listen(port, () => {
-    console.log(`Server Started At Port: ${port}. \n Enter Ctrl+C to stop the server`);
-    console.log(`name: ${name} \n batch: ${batch}`);
+app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
 });
